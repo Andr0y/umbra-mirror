@@ -1,0 +1,6 @@
+name: umbra-env
+channels:
+  - defaults
+dependencies:
+  - python=3.13
+  - numpy
