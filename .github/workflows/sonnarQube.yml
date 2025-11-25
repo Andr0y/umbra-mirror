@@ -3,18 +3,18 @@ name: Code quality test
 on:
   push:
     branches:
-      - main
+      - 1-code-quality-private-server-ci-integration
 
 
 jobs:
   build:
     name: Build and analyze
     runs-on: self-hosted
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
       - uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
