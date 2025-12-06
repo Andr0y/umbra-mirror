@@ -68,4 +68,4 @@ jobs:
       - name: Run test_env.py
         shell: bash -l {0}
         run: |
-          python test_env.py
+          python tests/test_env.py
