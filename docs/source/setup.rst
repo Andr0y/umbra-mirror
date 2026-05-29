@@ -19,7 +19,7 @@ Installation from Source
 
    .. code-block:: bash
 
-      git clone https://github.com/your-org/umbra.git
+      git clone https://github.com/Umbra-EIP/umbra-mirror.git
       cd umbra
 
 2. **Create a virtual environment** (recommended):
