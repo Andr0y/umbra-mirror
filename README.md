@@ -106,3 +106,43 @@ Le dashboard propose aussi une page **Dataset Quality Checker** (sidebar) pour v
 - Assistance aux personnes atteintes de troubles moteurs ou neurodégénératifs.
 - Contrôle d'exosquelettes pour la rééducation ou l'augmentation physique.
 - Applications grand public dans le domaine de la sécurité ou de l'ergonomie.
+
+---
+
+## Documentation
+
+Complete documentation is available in the `docs/` directory. Build the Sphinx documentation locally:
+
+### Building Documentation
+
+```bash
+# Install documentation dependencies
+pip install -r requirements-docs.txt
+
+# Build HTML documentation
+cd docs
+make html
+
+# View in browser
+open build/html/index.html
+```
+
+### Online Documentation
+
+Documentation sections:
+
+- **[Getting Started](docs/source/index.rst)**: Project overview and features
+- **[Setup Guide](docs/source/setup.rst)**: Installation and environment configuration
+- **[Usage Guide](docs/source/usage.rst)**: Running preprocessing, training, and dashboard
+- **[Architecture](docs/source/architecture.rst)**: Project structure and design overview
+- **[Guides](docs/source/guides/)**: Detailed how-to guides
+  - [Preprocessing Guide](docs/source/guides/preprocessing.rst)
+  - [Model Training Guide](docs/source/guides/model_training.rst)
+  - [Dashboard Guide](docs/source/guides/dashboard.rst)
+- **[API Reference](docs/source/api/)**: Module and function documentation
+  - [EMG Movement API](docs/source/api/emg_movement.rst)
+  - [EEG-EMG API](docs/source/api/eeg_emg.rst)
+  - [Dashboard API](docs/source/api/dashboard.rst)
+- **[Beta Test Plan](docs/source/beta_test_plan.rst)**: Testing features and results
+
+See [docs/README.md](docs/README.md) for complete documentation building and deployment instructions.
