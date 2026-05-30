@@ -1,0 +1,8 @@
+# Documentation build dependencies for Umbra
+# Install with: pip install -r requirements-docs.txt
+
+sphinx>=7.0
+sphinx-rtd-theme
+sphinx-autodoc-typehints
+sphinx-copybutton
+myst-parser
