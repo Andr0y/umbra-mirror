@@ -5,13 +5,25 @@ __pycache__/
 
 .DS_Store
 
+# ── Umbra data & ML artifacts (keep out of Git) ───────────────────────────────
+data/eeg_emg/_uploads/
+data/eeg_emg/EEG_DATA/
+data/eeg_emg/EMG_DATA/
+data/eeg_emg/*.npz
+data/eeg_emg_*_reports/
+data/quality_reports/
+data/comparison_reports/
+data/hardware_reports/
+src/eeg_emg/*.pth
+src/eeg_emg/_uploads/
+src/models/
+eeg2emg_preds.npz
+*.npz
+.dvc/
+.axon/
+
 # C extensions
 *.so
-
-data/ninapro/s*/*
-data/preprocessed/
-data/quality_reports/
-data/eeg_emg/_uploads/
 
 # Distribution / packaging
 .Python
@@ -141,19 +153,6 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Kestal AI
-.kestal/
-kestal/
-**/kestal/
-.cursor/rules/kestal*.mdc
-.mcp.json
-.cursor/mcp.json
-.claude/*
-CLAUDE.md
-AGENTS.md
-.claudeignore
-
-
 # Environments
 .env
 .envrc
@@ -225,5 +224,3 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-.axon/
-

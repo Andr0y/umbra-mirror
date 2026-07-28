@@ -23,6 +23,7 @@ from src.dashboard.eeg_emg_torch_hardware import (
     run_torch_profile,
     save_torch_hardware_report,
 )
+from src.dashboard.upload_guard import MAX_NPZ_UPLOAD_BYTES, validate_upload
 from src.eeg_emg.dashboard_defaults import (
     EEG_EMG_DATA_DIR,
     EEG_EMG_DEFAULT_NPZ,
@@ -154,6 +155,8 @@ def _merged_system(rep: dict) -> dict:
 st.sidebar.header("Data (.npz)")
 npz_files = list_npz_files()
 uploaded = st.sidebar.file_uploader("Override: upload .npz", type=["npz"])
+if not validate_upload(uploaded, max_bytes=MAX_NPZ_UPLOAD_BYTES, allowed_suffix=".npz"):
+    uploaded = None
 selected_npz: str | None = None
 
 default_npz_name = Path(EEG_EMG_DEFAULT_NPZ).name

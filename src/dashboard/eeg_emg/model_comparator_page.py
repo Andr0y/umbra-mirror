@@ -22,6 +22,7 @@ from src.dashboard.eeg_emg_model_compare import (
     run_eeg_emg_comparison,
     save_comparison,
 )
+from src.dashboard.upload_guard import MAX_NPZ_UPLOAD_BYTES, validate_upload
 from src.eeg_emg.dashboard_defaults import (
     EEG_EMG_DATA_DIR,
     EEG_EMG_DEFAULT_NPZ,
@@ -40,6 +41,8 @@ st.caption("Compare checkpoints: MSE, RMSE, MAE, R², Pearson r — all on the s
 st.sidebar.header("Data (.npz)")
 npz_files = list_npz_files()
 uploaded = st.sidebar.file_uploader("Override: upload .npz", type=["npz"])
+if not validate_upload(uploaded, max_bytes=MAX_NPZ_UPLOAD_BYTES, allowed_suffix=".npz"):
+    uploaded = None
 selected_npz: str | None = None
 
 default_npz_name = Path(EEG_EMG_DEFAULT_NPZ).name

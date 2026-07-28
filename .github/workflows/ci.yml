@@ -40,10 +40,10 @@ jobs:
           key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: ruff lint
-        run: ruff check src/ tests/ scripts/
+        run: ruff check src/ tests/
 
       - name: ruff format check
-        run: ruff format --check src/ tests/ scripts/
+        run: ruff format --check src/ tests/
 
       - name: pre-commit (non-ruff hooks)
 

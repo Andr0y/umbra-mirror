@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from src.dashboard.upload_guard import MAX_NPZ_UPLOAD_BYTES, MAX_PTH_UPLOAD_BYTES, validate_upload
 from src.eeg_emg.dashboard_defaults import (
     EEG_EMG_DATA_DIR,
     EEG_EMG_DEFAULT_NPZ,
@@ -35,6 +36,8 @@ npz_files = sorted(
     f for f in os.listdir(EEG_EMG_DATA_DIR) if f.endswith(".npz") and not f.startswith(".")
 )
 uploaded_npz = st.sidebar.file_uploader("Override: upload .npz", type=["npz"])
+if not validate_upload(uploaded_npz, max_bytes=MAX_NPZ_UPLOAD_BYTES, allowed_suffix=".npz"):
+    uploaded_npz = None
 
 default_npz_name = Path(EEG_EMG_DEFAULT_NPZ).name
 npz_index = npz_files.index(default_npz_name) if default_npz_name in npz_files else 0
@@ -57,6 +60,8 @@ if os.path.isdir(EEG_EMG_MODEL_DIR):
         f for f in os.listdir(EEG_EMG_MODEL_DIR) if f.endswith(".pth") and not f.startswith(".")
     )
 uploaded_pth = st.sidebar.file_uploader("Override: upload .pth", type=["pth"])
+if not validate_upload(uploaded_pth, max_bytes=MAX_PTH_UPLOAD_BYTES, allowed_suffix=".pth"):
+    uploaded_pth = None
 
 general_name = Path(EEG_EMG_DEFAULT_PTH).name
 subject_name = Path(EEG_EMG_SUBJECT_MODEL_PTH).name

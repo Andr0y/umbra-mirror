@@ -1,4 +1,0 @@
-[core]
-    remote = storage
-['remote "storage"']
-    url = ssh://root@157.250.207.123/root/dvc-storage

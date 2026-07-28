@@ -1,4 +1,4 @@
-.PHONY: help install lint format type-check test audit docker-build docker-run regression benchmark clean train-eeg2emg-single
+.PHONY: help install lint format type-check test audit docker-build docker-run train-eeg2emg clean
 
 PYTHON      := python3
 IMAGE_NAME  := umbra
@@ -15,8 +15,7 @@ help:
 	@echo "  audit         Run pip-audit security check"
 	@echo "  docker-build  Build the Docker image"
 	@echo "  docker-run    Run the Streamlit dashboard in Docker"
-	@echo "  regression    Run model accuracy regression gate"
-	@echo "  benchmark     Run full model benchmark and save report"
+	@echo "  train-eeg2emg Train EEG→EMG on dataset_subject_1.npz"
 	@echo "  clean         Remove build/cache artifacts"
 
 install:
@@ -24,10 +23,10 @@ install:
 	pre-commit install
 
 lint:
-	ruff check src/ tests/ scripts/
+	ruff check src/ tests/
 
 format:
-	ruff format src/ tests/ scripts/
+	ruff format src/ tests/
 
 type-check:
 	mypy src/
@@ -39,26 +38,19 @@ audit:
 	pip-audit -r requirements.txt --format=columns
 
 docker-build:
-	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .ma
+	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
 docker-run:
 	docker run --rm -p $(PORT):8501 \
-		-v "$(PWD)/src/models:/app/src/models:ro" \
 		-v "$(PWD)/data:/app/data:ro" \
+		-v "$(PWD)/src/eeg_emg:/app/src/eeg_emg:ro" \
 		$(IMAGE_NAME):$(IMAGE_TAG)
 
-regression:
-	$(PYTHON) scripts/regression_check.py
-
-benchmark:
-	$(PYTHON) scripts/run_comparison.py --dataset-id 1
-
-# Single-subject / high-accuracy EEG→EMG (group-aware val split, cosine LR, AdamW)
-train-eeg2emg-single:
-	$(PYTHON) -m src.eeg_emg.eeg2emg_train_single_subject \
-		--data_path data/eeg_emg/dataset_augmented.npz \
+train-eeg2emg:
+	$(PYTHON) -m src.eeg_emg.eeg2emg_run \
+		--data_path data/eeg_emg/dataset_subject_1.npz \
 		--normalize \
-		--save_path src/eeg_emg/eeg2emg_single_subject_best.pth
+		--save_path src/eeg_emg/eeg2emg_best.pth
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true

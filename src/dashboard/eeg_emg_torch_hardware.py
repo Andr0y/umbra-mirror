@@ -148,7 +148,7 @@ def run_torch_profile(
     Uses the same windowing and split as ``run_inference``.
     """
     import torch
-    from torch.utils.data import DataLoader, random_split
+    from torch.utils.data import DataLoader, Subset, random_split
 
     if batch_sizes is None:
         batch_sizes = [1, 4, 8, 16]
@@ -219,7 +219,7 @@ def run_torch_profile(
         )
 
     if n_total == 1:
-        val_set = dataset
+        val_set: EEGEMGWindowDataset | Subset[Any] = dataset
     else:
         n_val = max(1, int(n_total * val_ratio))
         n_train = n_total - n_val

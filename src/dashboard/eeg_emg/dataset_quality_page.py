@@ -21,6 +21,7 @@ from src.dashboard.eeg_emg_dataset_quality import (
     load_report,
     save_report,
 )
+from src.dashboard.upload_guard import MAX_NPZ_UPLOAD_BYTES, validate_upload
 from src.eeg_emg.dashboard_defaults import EEG_EMG_DATA_DIR, EEG_EMG_DEFAULT_NPZ
 from src.eeg_emg.eeg2emg_inference import prepare_eeg_emg_trials
 
@@ -41,6 +42,8 @@ st.sidebar.header("Dataset (.npz)")
 os.makedirs(EEG_EMG_DATA_DIR, exist_ok=True)
 npz_files = list_npz_files()
 uploaded = st.sidebar.file_uploader("Override: upload .npz", type=["npz"])
+if not validate_upload(uploaded, max_bytes=MAX_NPZ_UPLOAD_BYTES, allowed_suffix=".npz"):
+    uploaded = None
 
 default_name = Path(EEG_EMG_DEFAULT_NPZ).name
 npz_index = npz_files.index(default_name) if default_name in npz_files else 0
