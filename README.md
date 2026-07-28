@@ -1,108 +1,103 @@
 # Umbra – EIP
 
-## Description du projet
+[![CI](https://github.com/Andr0y/umbra-mirror/actions/workflows/ci.yml/badge.svg)](https://github.com/Andr0y/umbra-mirror/actions/workflows/ci.yml)
 
-Ce projet vise à développer une intelligence artificielle capable de devenir une **copie motrice de l'individu**, fonctionnant **en tandem** avec lui. Grâce à l'utilisation de **technologies non-invasives** comme les **électromyogrammes (EMG)** et les **électroencéphalogrammes (EEG)**, l'IA peut déléguer le contrôle de **membres supplémentaires ou de remplacement**, ou assister dans le contrôle d'un **exosquelette**.
+## Objectif du projet
 
-Cette approche ouvre des perspectives importantes :
+Développer une IA visant une **copie motrice** de l’individu à partir de signaux **non invasifs** (**EEG**, **EMG**) : prédire l’activité EMG à partir de l’EEG pour des usages recherche, rééducation ou interfaces homme-machine.
 
-- **Recherche et médecine** : lutte contre les maladies neuro-dégénératives et réhabilitation motrice.
-- **Usage quotidien et sécurité** : augmentation des capacités et assistance dans la vie de tous les jours.
-
----
-
-## Fonctionnement
-
-Le projet repose sur deux modèles principaux :
-
-1. **Modèle EEG → EMG**
-   À partir des signaux EEG du cerveau, le modèle prédira les signaux EMG correspondants, capturant ainsi l'intention motrice de l'utilisateur.
-
-2. **Modèle EMG → Mouvement**
-   Ce modèle prend les signaux EMG et prédit les mouvements des membres ou de l'exosquelette (gestes de la main NinaPro). **Implémenté** : préprocessing, entraînement CNN-LSTM, dashboard Streamlit.
+Ce dépôt fournit un pipeline **EEG → EMG** (jeux appariés `.npz`, modèle CNN–LSTM **PyTorch**, inférence et dashboard Streamlit).
 
 ---
 
-## Technologies utilisées
+## Prérequis
 
-- **EEG** (Électroencéphalogrammes) pour capter l'activité cérébrale.
-- **EMG** (Électromyogrammes) pour capter l'activité musculaire.
-- **Machine Learning / Deep Learning** (TensorFlow/Keras) pour prédire et traduire les signaux en mouvements.
-- **Python** comme langage principal de développement.
+| Élément | Détail |
+|---------|--------|
+| Python | **3.11+** |
+| GPU | Optionnel (entraînement PyTorch ; inférence CPU possible) |
+| Données | Fichiers `.npz` et checkpoints `.pth` en local — voir [`data/README.md`](data/README.md) |
 
 ---
 
 ## Installation
 
 ```bash
-git clone https://github.com/votre-utilisateur/umbra.git
-cd umbra
-pip install -r requirements.txt
+git clone https://github.com/Andr0y/umbra-mirror.git
+cd umbra-mirror
+make install
 ```
 
-Pour un environnement Conda :
+Puis placer vos données et modèles (non versionnés) :
 
-```bash
-conda env update --file environment.yml --name umbra-env
-conda activate umbra-env
-```
+- `data/eeg_emg/*.npz`
+- `src/eeg_emg/*.pth`
 
 ---
 
-## Utilisation
+## Démarrage rapide
 
-Toutes les commandes sont à exécuter **à la racine du dépôt**.
-
-### 1. Préprocessing (NinaPro → fenêtres EMG + labels)
-
-Lit les données brutes dans `data/ninapro/` et enregistre un nouveau jeu dans `data/preprocessed/<id>/` (X.npy, y.npy) :
+### 1. Entraîner (optionnel)
 
 ```bash
-python -m src.main
+make train-eeg2emg
 ```
 
-### 2. Entraînement du modèle EMG → mouvement
-
-Utilise un jeu préprocessé par son identifiant (par défaut `1`) :
-
-```bash
-python -m src.emg_movement.train --dataset 1
-```
-
-Options :
-
-- `--dataset N` : utiliser `data/preprocessed/N/` (défaut : 1).
-- `--output FICHIER.keras` : nom du modèle enregistré dans `src/models/` (défaut : `cnn_lstm_emg_v3.keras`).
-
-### 3. Dashboard Streamlit
-
-Visualisation et inférence sur les données préprocessées et les modèles entraînés :
+### 2. Lancer le dashboard
 
 ```bash
 streamlit run src/dashboard/app.py
 ```
 
-Dans l’interface : choisir un dataset dans `data/preprocessed/`, charger un modèle depuis `src/models/`, puis lancer l’inférence.
-Le dashboard propose aussi une page **Dataset Quality Checker** (sidebar) pour valider l’intégrité et la répartition des jeux préprocessés (X.npy / y.npy) avant entraînement.
+Ouvrir **http://localhost:8501** — pages : Decoder, Dataset quality, Model comparator, Hardware impact.
 
 ---
 
-## Structure du dépôt
+## Commandes Makefile
 
-- `src/config.py` : chemins et constantes (NinaPro, preprocessed, models).
-- `src/emg_movement/` : préprocessing, modèle CNN-LSTM, entraînement, utils NinaPro.
-- `src/eeg_emg/` : futur modèle EEG → EMG (placeholder).
-- `src/dashboard/` : application Streamlit (EMG Hand Movement Decoder, Dataset Quality Checker).
-- `src/models/` : modèles Keras sauvegardés (.keras).
-- `data/ninapro/` : données brutes NinaPro.
-- `data/preprocessed/` : jeux préprocessés (X.npy, y.npy par sous-dossier).
-- `tests/` : tests unitaires (environnement, modèle).
-- `docs/` : documentation additionnelle (ex. beta_test_plan).
+| Cible | Description |
+|-------|-------------|
+| `make install` | Dépendances + pre-commit |
+| `make lint` / `make format` | Ruff |
+| `make type-check` | Mypy |
+| `make test` | Pytest + couverture |
+| `make train-eeg2emg` | Entraînement EEG→EMG (exemple) |
+| `make docker-build` / `make docker-run` | Conteneur Streamlit |
 
 ---
 
-## Cas d'usage
+## Structure
 
-- Assistance aux personnes atteintes de troubles moteurs ou neurodégénératifs.
-- Contrôle d'exosquelettes pour la rééducation ou l'augmentation physique.
-- Applications grand public dans le domaine de la sécurité ou de l'ergonomie.
+| Chemin | Rôle |
+|--------|------|
+| `src/eeg_emg/` | Entraînement, inférence, métriques PyTorch |
+| `src/dashboard/` | Streamlit (`app.py`, pages `eeg_emg/`) |
+| `src/config.py` | Chemins par défaut |
+| `data/` | Données et rapports JSON ([`data/README.md`](data/README.md)) |
+| `docs/` | Architecture, sécurité ([`docs/README.md`](docs/README.md)) |
+| `tests/` | Pytest |
+
+---
+
+## Variables d’environnement
+
+| Variable | Défaut | Rôle |
+|----------|--------|------|
+| `UMBRA_MAX_NPZ_UPLOAD_MB` | `200` | Taille max upload `.npz` |
+| `UMBRA_MAX_PTH_UPLOAD_MB` | `50` | Taille max upload `.pth` |
+
+---
+
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Dashboard pages](docs/dashboard_eeg_emg.md)
+- [Changelog](CHANGELOG.md)
+
+Qualité locale : `make lint`, `make type-check`, `make test`.
+
+---
+
+## Licence
+
+[MIT](LICENSE) — projet Umbra EIP.

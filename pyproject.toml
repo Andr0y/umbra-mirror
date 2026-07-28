@@ -1,7 +1,7 @@
 [project]
 name = "umbra"
-version = "0.1.0"
-description = "EMG hand-gesture recognition with CNN-LSTM on NinaPro dataset"
+version = "0.4.0"
+description = "EEG→EMG prediction with PyTorch and Streamlit dashboard"
 requires-python = ">=3.11"
 readme = "README.md"
 
@@ -31,13 +31,11 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 # Streamlit multi-page apps require sys.path manipulation before other imports.
-# The E402 violations here are intentional — suppressing them is correct.
 "src/dashboard/app.py" = ["E402"]
-"src/dashboard/model_comparator.py" = ["E402"]
-"src/dashboard/hardware_profiler.py" = ["E402"]
-"src/dashboard/pages/*.py" = ["E402"]
-# Scripts that manipulate sys.path to import src.* from the repo root
-"scripts/run_comparison.py" = ["E402"]
+"src/dashboard/eeg_emg/*.py" = ["E402", "B905"]
+"src/dashboard/eeg_emg_dataset_quality.py" = ["E402"]
+"src/dashboard/eeg_emg_model_compare.py" = ["E402"]
+"src/dashboard/eeg_emg_torch_hardware.py" = ["E402"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
@@ -51,16 +49,23 @@ line-ending = "lf"
 
 [tool.mypy]
 python_version = "3.11"
-ignore_missing_imports = true   # many ML libs lack complete stubs
+ignore_missing_imports = true
 warn_unused_ignores = true
-warn_return_any = false         # too noisy with TF/Keras dynamic typing
-exclude = ["tests/", "scripts/"]
+warn_return_any = false
+exclude = ["tests/"]
+
+[[tool.mypy.overrides]]
+module = [
+    "src.dashboard.app",
+    "src.dashboard.eeg_emg.*",
+]
+ignore_errors = true
 
 # ── Pytest ────────────────────────────────────────────────────────────────────
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]   # adds project root to sys.path so "from src.x import ..." works
+pythonpath = ["."]
 addopts = "-v --tb=short --cov=src --cov-report=xml:coverage.xml --cov-report=term-missing"
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
@@ -70,7 +75,7 @@ python_functions = ["test_*"]
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["tests/*", "scripts/*", "src/eeg_emg/*"]  # stub package
+omit = ["tests/*", "src/eeg_emg/eeg2emg_run.py"]
 
 [tool.coverage.report]
 show_missing = true

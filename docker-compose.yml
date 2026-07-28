@@ -1,0 +1,14 @@
+# Local dashboard stack: build image and run Streamlit with host data/checkpoints mounted read-only.
+# Usage: docker compose up --build
+services:
+  dashboard:
+    build: .
+    image: umbra:latest
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data:ro
+      - ./src/eeg_emg:/app/src/eeg_emg:ro
+    environment:
+      UMBRA_MAX_NPZ_UPLOAD_MB: "${UMBRA_MAX_NPZ_UPLOAD_MB:-200}"
+      UMBRA_MAX_PTH_UPLOAD_MB: "${UMBRA_MAX_PTH_UPLOAD_MB:-50}"
